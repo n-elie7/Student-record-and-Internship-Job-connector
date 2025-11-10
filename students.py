@@ -23,3 +23,5 @@ def delete_student(roll_no, dp_path=DEFAULT_DB):
     conn = get_connection(dp_path)
     cur = conn.cursor()
     #We can delete student using the roll_no 
+    try:
+        cur.execute("DELETE FROM students WHERE roll_no="?"", (roll_no.strip(), ))
