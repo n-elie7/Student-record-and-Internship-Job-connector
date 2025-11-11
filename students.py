@@ -18,6 +18,21 @@ def add_student(name, reg_no, age=None, course=None, gpa=None, db_path=DEFAULT_D
     finally:
         conn.close()
 
+def get_all_students(db_path=DEFAULT_DB):
+    pass
+
+def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
+    pass
+
+def search_students_by_name(name_substr, db_path=DEFAULT_DB):
+    pass
+
+def update_student(roll_no, db_path=DEFAULT_DB, **fields):
+    pass
+
+def delete_student(roll_no, db_path=DEFAULT_DB):
+    pass
+
 def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database
     conn = get_connection(dp_path)
