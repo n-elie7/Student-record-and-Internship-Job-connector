@@ -22,7 +22,8 @@ def get_all_students(db_path=DEFAULT_DB):
     pass
 
 def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    cur = conn.cursor()
 
 def search_students_by_name(name_substr, db_path=DEFAULT_DB):
     pass
