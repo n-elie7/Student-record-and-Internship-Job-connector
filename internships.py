@@ -1,13 +1,52 @@
-from database import DEFAULT_DB
+from database import DEFAULT_DB, get_connection
+from datetime import datetime
 
 
 def add_internship(title, company=None, location=None, duration=None,
                    stipend=None, description=None, application_deadline=None,
                    db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    
+    cur = conn.cursor()
+
+    if application_deadline:
+        try:
+            datetime.strftime(application_deadline, "%Y-%m-%d")
+        except Exception as e:
+            raise ValueError("Application deadline must be YYYY-MM-DD")
+
+    try:
+        cur.execute("INSERT INTO internships (title, company, location, duration, stipend, description, application_deadline) VALUES (?, ?, ?, ?, ?, ?, ?)", (title.strip(), company.strip(), location.strip(), duration.strip(), stipend.strip(), description.strip(), application_deadline.strip()))
+
+        conn.commit()
+
+        last_id = cur.lastrowid
+
+        return last_id
+    
+    except Exception as e:
+        raise ValueError("You entered wrong value") from e
+    finally:
+        conn.close()
 
 def get_all_internships(db_path=DEFAULT_DB):
-    pass
+    try:
+        conn = get_connection(db_path)
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM internships ORDER BY application_deadline IS NULL, application_deadline ASC")
+
+        rows= cur.fetchall()
+
+        data = [dict(row) for row in rows]
+
+        return data
+    except Exception as e:
+        raise ValueError("There is no data returned")
+    finally:
+        conn.close()
+
+    
 
 def get_open_internships(db_path=DEFAULT_DB):
     pass
