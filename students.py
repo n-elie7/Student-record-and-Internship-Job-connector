@@ -5,6 +5,13 @@ def validate_student_data(name, roll_no, age, course, gpa):
  """Check if the student data is valid."""
  if not name or not roll_no:
         raise ValueError("Name and Roll Number cannot be empty.")
+ if age is not None:
+        try:
+            age =int(age)
+            if age <= 0:
+                raise ValueError("Age must be positive.")
+        except ValueError:
+            raise ValueError("Age must be a valid number.")
 def add_student(name, roll_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
     """
     Add a student to the database.
