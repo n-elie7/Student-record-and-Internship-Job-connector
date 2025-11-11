@@ -59,3 +59,4 @@ def init_db(db_path=DEFAULT_DB):
 
     conn.commit()
     conn.close()
+
