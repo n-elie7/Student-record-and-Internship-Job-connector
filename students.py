@@ -2,9 +2,9 @@ import sqlite3
 from database import DEFAULT_DB, get_connection
 
 def add_student(name, reg_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
-
-    conn = get_connection(db_path)
     #Get connection to the SQL database
+    conn = get_connection(db_path)
+    
     cur = conn.cursor()
     try:
         cur.execute(
@@ -19,7 +19,23 @@ def add_student(name, reg_no, age=None, course=None, gpa=None, db_path=DEFAULT_D
         conn.close()
 
 def get_all_students(db_path=DEFAULT_DB):
-    pass
+    # Get connection to ou database
+    conn = get_connection(db_path)
+    # create cursor
+    cur = conn.cursor()
+
+    try:
+        # Querying to fetch all students from database
+        cur.execute("SELECT * FROM students ORDER BY name")
+
+        rows = cur.fetchall()
+        data = [dict(row) for row in rows]
+
+        return data
+    except:
+        raise ValueError("Failed to get all students")
+    finally:
+        conn.close()
 
 def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
     pass
@@ -33,8 +49,9 @@ def update_student(roll_no, db_path=DEFAULT_DB, **fields):
 def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database
     conn = get_connection(dp_path)
+    # create cursor
     cur = conn.cursor()
-    #We can delete student using the reg_no
+    # We can delete student using the reg_no
     try:
         cur.execute("DELETE FROM students WHERE roll_no=?", (reg_no.strip(), ))
         conn.commit()
