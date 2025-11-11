@@ -34,7 +34,7 @@ def add_student(name, roll_no, age=None, course=None, gpa=None, db_path=DEFAULT_
         conn.close()
 
 def get_all_students(db_path=DEFAULT_DB):
-    # Get connection to ou database
+    # Get connection to our database
     conn = get_connection(db_path)
     # create cursor
     cur = conn.cursor()
@@ -52,11 +52,49 @@ def get_all_students(db_path=DEFAULT_DB):
     finally:
         conn.close()
 
-def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
-    pass
+def find_student_by_roll(reg_no, db_path=DEFAULT_DB):
+    # get connection to the database
+    conn = get_connection(db_path)
+    # create cursor
+    cur = conn.cursor()
 
-def search_students_by_name(name_substr, db_path=DEFAULT_DB):
-    pass
+    try: 
+        # finding student by roll
+        cur.execute("SELECT * FROM students WHERE roll_no = ?", (reg_no.strip(),))
+   
+        row = cur.fetchone()
+        data = dict(row) if row else None 
+
+        return data
+    except:
+        raise ValueError("Failed to get student")
+    finally:
+        conn.close()
+    
+        
+
+
+
+def search_students_by_name(name, db_path=DEFAULT_DB):
+    #get connection to our database
+    conn = get_connection(db_path)
+    # ceate cursor
+    cur = conn.cursor()
+
+    try:
+        # finding student by name
+        cur.execute("SELECT * FROM students WHERE name = ?", (name.strip(),))
+
+        row = cur.fetchone()
+        data = dict(row) if row else None
+
+        return data
+    except:
+        raise ValueError("Failed to get student")
+    finally:
+        conn.close()
+        
+
 
 def update_student(roll_no, db_path=DEFAULT_DB, **fields):
     pass
