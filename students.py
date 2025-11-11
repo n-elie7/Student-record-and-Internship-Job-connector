@@ -20,3 +20,18 @@ def add_student(name, roll_no, age=None, course=None, gpa=None, db_path=DEFAULT_
         raise ValueError(f"Failed to add student: {e}") from e
     finally:
         conn.close()
+
+def get_all_students(db_path=DEFAULT_DB):
+    pass
+
+def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
+    pass
+
+def search_students_by_name(name_substr, db_path=DEFAULT_DB):
+    pass
+
+def update_student(roll_no, db_path=DEFAULT_DB, **fields):
+    pass
+
+def delete_student(roll_no, db_path=DEFAULT_DB):
+    pass
