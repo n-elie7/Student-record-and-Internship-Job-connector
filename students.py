@@ -22,17 +22,18 @@ def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database
     conn = get_connection(dp_path)
     cur = conn.cursor()
-    #We can delete student using the roll_no 
+    #We can delete student using the reg_no
     try:
         cur.execute("DELETE FROM students WHERE roll_no=?", (reg_no.strip(), ))
         conn.commit()
         #The changes to be saved in database
-        if cur.rowcount != 0:
-            #counts the number of rows that have been modified by last SQL command. 
-            print("THE STUDENT HAS BEEN DELETED SUCCESSFULLY.")
+        affected = cur.rowcount
+        # counts the number of rows that have been modified by last SQL command. 
+        return affected
     except ValueError:
         print("REGISTRATION NUMBER NOT FOUND")
     finally:
+        # close the connection
         conn.close()
-        #closes the database
+        
     
