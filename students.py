@@ -97,7 +97,28 @@ def search_students_by_name(name, db_path=DEFAULT_DB):
 
 
 def update_student(roll_no, db_path=DEFAULT_DB, **fields):
-    pass
+    
+    conn = get_connection(db_path)
+    
+    cur = conn.cursor()
+
+    try:
+        
+        set_clause = ", ".join([f"{key} = ?" for key in fields.keys()])
+        values = list(fields.values())
+        values.append(roll_no.strip())  
+
+        sql = f"UPDATE students SET {set_clause} WHERE roll_no = ?"
+        cur.execute(sql, values)
+
+        conn.commit()
+        affected = cur.rowcount  
+
+        return affected
+    except Exception as e:
+        raise ValueError("Failed to update student") from e
+    finally:
+        conn.close()
 
 def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database
