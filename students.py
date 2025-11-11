@@ -22,9 +22,18 @@ def get_all_students(db_path=DEFAULT_DB):
     pass
 
 def find_student_by_roll(roll_no, db_path=DEFAULT_DB):
+    # connect the function to the SQL datatbase.
     conn = get_connection(db_path)
+    # create a cursor object to execute SQL commands
     cur = conn.cursor()
-
+    try:
+        cur.execute("SELECT * FROM students WHERE roll_no=?", (roll_no.strip(), ))
+        student = cur.fetchone()
+        if student is None:
+            raise ValueError("ROLL NUMBER NOT FOUND")
+        return dict(student)
+    finally:
+        conn.close()
 def search_students_by_name(name_substr, db_path=DEFAULT_DB):
     pass
 
