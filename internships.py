@@ -30,7 +30,23 @@ def add_internship(title, company=None, location=None, duration=None,
         conn.close()
 
 def get_all_internships(db_path=DEFAULT_DB):
-    pass
+    try:
+        conn = get_connection(db_path)
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM internships ORDER BY application_deadline IS NULL, application_deadline ASC")
+
+        rows= cur.fetchall()
+
+        data = [dict(row) for row in rows]
+
+        return data
+    except Exception as e:
+        raise ValueError("There is no data returned")
+    finally:
+        conn.close()
+
+    
 
 def get_open_internships(db_path=DEFAULT_DB):
     pass
