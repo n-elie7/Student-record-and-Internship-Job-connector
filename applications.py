@@ -1,5 +1,5 @@
 import sqlite3
-from database import DEFAULT_DB
+from database import DEFAULT_DB, get_connection
 
 
 def apply_to_internship(student_roll, internship_id, note=None, db_path=DEFAULT_DB):
