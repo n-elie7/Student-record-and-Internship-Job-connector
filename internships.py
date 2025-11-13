@@ -90,7 +90,21 @@ def find_internship_by_id(internship_id, db_path=DEFAULT_DB):
         conn.close()
 
 def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
-    pass
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    try:
+        set_clause = ", ".join([f"{key} = ?" for key in fields.keys()])
+        values = list(fields.values())
+        values.append(internship_id)
+
+        cur.execute(f"UPDATE internships SET {set_clause} WHERE id = ?", values)
+
+        conn.commit()
+
+    except Exception as e:
+        raise ValueError("Failed to update internship") from e
+    finally:
+        conn.close()
 
 def delete_internship(internship_id, db_path=DEFAULT_DB):
     conn = get_connection(db_path)
