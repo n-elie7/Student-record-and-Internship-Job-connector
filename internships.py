@@ -84,6 +84,10 @@ def find_internship_by_id(internship_id, db_path=DEFAULT_DB):
         data = dict(row)
 
         return data 
+    except Exception as e:
+        raise ValueError("Error retrieving internship") from e
+    finally:
+        conn.close()
 
 def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
     pass
