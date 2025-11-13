@@ -52,7 +52,20 @@ def get_open_internships(db_path=DEFAULT_DB):
     pass
 
 def find_internship_by_id(internship_id, db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM internships WHERE id = ?", (internship_id,))
+
+        row = cur.fetchone()
+
+        if row is None:
+            raise ValueError(f"Internship with ID {internship_id} not found")
+
+        data = dict(row)
+
+        return data 
 
 def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
     pass
