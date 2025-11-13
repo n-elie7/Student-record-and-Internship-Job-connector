@@ -49,7 +49,23 @@ def get_all_internships(db_path=DEFAULT_DB):
     
 
 def get_open_internships(db_path=DEFAULT_DB):
-    pass
+    try:
+        conn = get_connection(db_path)
+        cur = conn.cursor()
+
+        today = datetime.today().strftime("%Y-%m-%d")
+
+        cur.execute("SELECT * FROM internships WHERE application_deadline IS NULL OR application_deadline >= ? ORDER BY application_deadline IS NULL, application_deadline ASC", (today,))
+
+        rows= cur.fetchall()
+
+        data = [dict(row) for row in rows]
+
+        return data
+    except Exception as e:
+        raise ValueError("There is no data returned")
+    finally:
+        conn.close()
 
 def find_internship_by_id(internship_id, db_path=DEFAULT_DB):
     pass
@@ -58,4 +74,4 @@ def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
     pass
 
 def delete_internship(internship_id, db_path=DEFAULT_DB):
-    pass
+    
