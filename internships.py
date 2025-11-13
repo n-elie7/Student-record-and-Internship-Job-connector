@@ -76,4 +76,14 @@ def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
     pass
 
 def delete_internship(internship_id, db_path=DEFAULT_DB):
-    
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM internships WHERE id = ?", (internship_id,))
+
+        conn.commit()
+
+    except Exception as e:
+        raise ValueError("Failed to delete internship") from e
+    finally:
+        conn.close()
