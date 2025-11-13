@@ -96,29 +96,29 @@ def search_students_by_name(name, db_path=DEFAULT_DB):
         
 
 
-def update_student(roll_no, db_path=DEFAULT_DB, **fields):
-    # get connection to our database
+def update_student(reg_no, db_path=DEFAULT_DB, **fields):
+    """
+    Update student fields by roll_no.
+    Allowed fields: name, age, course, gpa
+    Returns number of affected rows.
+    """
+    allowed = {'name','age','course','gpa'}
+    updates = {k:v for k,v in fields.items() if k in allowed and v is not None}
+
+    if not updates:
+        raise ValueError('No valid fields to update')
+    
+    set_clause = ', '.join(f"{k} = ?" for k in updates.keys())
+    params = list(updates.values()) + [reg_no.strip()]
+    # Get connection to our database & create cursor
     conn = get_connection(db_path)
-    # create cursor
     cur = conn.cursor()
-    # We can update student using the roll_no
-    try:
-        #to set the clause for updating fields dynamically
-        set_clause = ", ".join([f"{key} = ?" for key in fields.keys()])
-        values = list(fields.values())
-        values.append(roll_no.strip())  
-        #the SQL query to update student details
-        sql = f"UPDATE students SET {set_clause} WHERE roll_no = ?"
-        cur.execute(sql, values)
-        #
-        conn.commit()
-        affected = cur.rowcount  
-        
-        return affected
-    except Exception as e:
-        raise ValueError("Failed to update student") from e
-    finally:
-        conn.close()
+    
+    cur.execute(f"UPDATE students SET {set_clause} WHERE roll_no = ?", params)
+    conn.commit()
+    affected = cur.rowcount
+    conn.close()
+    return affected
 
 def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database
