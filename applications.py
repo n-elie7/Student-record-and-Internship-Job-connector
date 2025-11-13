@@ -81,4 +81,13 @@ def get_all_applications(db_path=DEFAULT_DB):
     return [dict(r) for r in rows]
 
 def change_application_status(application_id, new_status, db_path=DEFAULT_DB):
-    pass
+    allowed = {'Applied','Shortlisted','Rejected','Hired'}
+    if new_status not in allowed:
+        raise ValueError(f"Status must be one of {allowed}")
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    cur.execute("UPDATE applications SET status = ? WHERE id = ?", (new_status, application_id))
+    conn.commit()
+    affected = cur.rowcount
+    conn.close()
+    return affected
