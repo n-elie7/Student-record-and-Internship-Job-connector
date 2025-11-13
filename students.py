@@ -12,7 +12,7 @@ def validate_student_data(name, roll_no, age, course, gpa):
                 raise ValueError("Age must be positive.")
         except ValueError:
             raise ValueError("Age must be a valid number.")
-def add_student(name, roll_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
+def add_student(name, reg_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
     """
     Add a student to the database.
     Returns: lastrowid on success.
@@ -96,8 +96,29 @@ def search_students_by_name(name, db_path=DEFAULT_DB):
         
 
 
-def update_student(roll_no, db_path=DEFAULT_DB, **fields):
-    pass
+def update_student(reg_no, db_path=DEFAULT_DB, **fields):
+    """
+    Update student fields by roll_no.
+    Allowed fields: name, age, course, gpa
+    Returns number of affected rows.
+    """
+    allowed = {'name','age','course','gpa'}
+    updates = {k:v for k,v in fields.items() if k in allowed and v is not None}
+
+    if not updates:
+        raise ValueError('No valid fields to update')
+    
+    set_clause = ', '.join(f"{k} = ?" for k in updates.keys())
+    params = list(updates.values()) + [reg_no.strip()]
+    # Get connection to our database & create cursor
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    
+    cur.execute(f"UPDATE students SET {set_clause} WHERE roll_no = ?", params)
+    conn.commit()
+    affected = cur.rowcount
+    conn.close()
+    return affected
 
 def delete_student(reg_no, dp_path=DEFAULT_DB):
     #Get the function to connect with the SQL database

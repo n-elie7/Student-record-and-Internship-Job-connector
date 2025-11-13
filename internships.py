@@ -49,7 +49,25 @@ def get_all_internships(db_path=DEFAULT_DB):
     
 
 def get_open_internships(db_path=DEFAULT_DB):
-    pass
+    try:
+        conn = get_connection(db_path)
+        cur = conn.cursor()
+        # Get today's date in YYYY-MM-DD format
+        today = datetime.today().strftime("%Y-%m-%d")
+        # Query to fetch internships with application deadlines in the future or no deadline
+        cur.execute("SELECT * FROM internships WHERE application_deadline IS NULL OR application_deadline >= ? ORDER BY application_deadline IS NULL, application_deadline ASC", (today,))
+        # Fetch all matching rows
+        rows= cur.fetchall()
+        # Convert rows to list of dictionaries
+        data = [dict(row) for row in rows]
+        # Return the list of open internships
+        return data
+    except Exception as e:
+        # Raises an error if no data is returned
+        raise ValueError("There is no data returned")
+    finally:
+        # Close the database connection
+        conn.close()
 
 def find_internship_by_id(internship_id, db_path=DEFAULT_DB):
     conn = get_connection(db_path)
@@ -71,4 +89,14 @@ def update_internship(internship_id, db_path=DEFAULT_DB, **fields):
     pass
 
 def delete_internship(internship_id, db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM internships WHERE id = ?", (internship_id,))
+
+        conn.commit()
+
+    except Exception as e:
+        raise ValueError("Failed to delete internship") from e
+    finally:
+        conn.close()
