@@ -13,3 +13,7 @@ def _exec_table_insert(table: str, payload: dict):
     res = sb.table(table).insert(payload).execute()
     return getattr(res, "data", None) or res.get("data", None)
 
+def _exec_table_update(table: str, payload: dict, match: dict):
+    """Helper to execute an update query on a table."""
+    res = sb.table(table).update(payload).match(match).execute()
+    return getattr(res, "data", None) or res.get("data", None)
