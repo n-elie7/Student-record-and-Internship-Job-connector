@@ -67,7 +67,18 @@ def get_applications_for_student(student_roll, db_path=DEFAULT_DB):
     return [dict(r) for r in rows]
 
 def get_all_applications(db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT a.id, s.roll_no, s.name as student_name, i.title as internship_title, i.company, a.applied_at, a.status
+        FROM applications a
+        JOIN students s ON a.student_id = s.id
+        JOIN internships i ON a.internship_id = i.id
+        ORDER BY a.applied_at DESC
+    """)
+    rows = cur.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
 
 def change_application_status(application_id, new_status, db_path=DEFAULT_DB):
     pass
