@@ -47,7 +47,24 @@ def apply_to_internship(student_roll, internship_id, note=None, db_path=DEFAULT_
 
 
 def get_applications_for_student(student_roll, db_path=DEFAULT_DB):
-    pass
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM students WHERE roll_no = ?", (student_roll.strip(),))
+    row = cur.fetchone()
+    if not row:
+        conn.close()
+        return []
+    student_id = row['id']
+    cur.execute("""
+        SELECT a.id, i.title as internship_title, i.company, a.applied_at, a.status, a.note, i.id as internship_id
+        FROM applications a
+        JOIN internships i ON a.internship_id = i.id
+        WHERE a.student_id = ?
+        ORDER BY a.applied_at DESC
+    """, (student_id,))
+    rows = cur.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
 
 def get_all_applications(db_path=DEFAULT_DB):
     pass
