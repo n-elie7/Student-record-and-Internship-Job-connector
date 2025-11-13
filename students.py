@@ -12,7 +12,7 @@ def validate_student_data(name, roll_no, age, course, gpa):
                 raise ValueError("Age must be positive.")
         except ValueError:
             raise ValueError("Age must be a valid number.")
-def add_student(name, roll_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
+def add_student(name, reg_no, age=None, course=None, gpa=None, db_path=DEFAULT_DB):
     """
     Add a student to the database.
     Returns: lastrowid on success.
