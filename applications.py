@@ -1,56 +1,67 @@
-from datetime import date, datetime
-import sqlite3
-from database import DEFAULT_DB, get_connection
+from helper_wrappers import _exec_table_insert, _exec_table_update
+from internships import find_internship_by_id
+from students import find_student_by_reg_no
+from setup_env import supabase as sb
 
 
-def apply_to_internship(student_roll, internship_id, note=None, db_path=DEFAULT_DB):
-    """
-    Create an application for a student to an internship.
-    Blocks applying after deadline (design choice). Raises ValueError for issues.
-    """
-    conn = get_connection(db_path)
-    cur = conn.cursor()
-
-    cur.execute("SELECT id FROM students WHERE roll_no = ?", (student_roll.strip(),))
-    row = cur.fetchone()
-    if not row:
-        conn.close()
-        raise ValueError('Student with that roll number not found')
-    student_id = row['id']
-
-    cur.execute("SELECT id, application_deadline FROM internships WHERE id = ?", (internship_id,))
-    intern = cur.fetchone()
+def apply_to_internship(student_roll: str, internship_id: int, note: str | None):
+    student = find_student_by_reg_no(student_roll)
+    if not student:
+        raise ValueError("Student not found.")
+    # Prevent applying after deadline: check internship
+    intern = find_internship_by_id(internship_id)
     if not intern:
-        conn.close()
-        raise ValueError('Internship not found')
+        raise ValueError("Internship not found.")
+    if intern.get("application_deadline"):
+        # simple check
+        from datetime import datetime, date
 
-    deadline = intern['application_deadline']
-    if deadline:
         try:
-            d = datetime.strptime(deadline, '%Y-%m-%d').date()
+            d = datetime.strptime(intern["application_deadline"], "%Y-%m-%d").date()
             if d < date.today():
-                conn.close()
-                raise ValueError('Cannot apply: application deadline has passed')
-        except Exception:
-            # If parsing fails, ignore and allow application (but ideally input was validated when created)
+                raise ValueError("Cannot apply: application deadline has passed.")
+        except ValueError:
+            # If date parse fails, ignore
             pass
-
+    payload = {"student_id": student["id"], "internship_id": internship_id}
+    if note:
+        payload["note"] = note
     try:
-        cur.execute("INSERT INTO applications (student_id, internship_id, note) VALUES (?, ?, ?)", (student_id, internship_id, note))
-        conn.commit()
-        last = cur.lastrowid
-        return last
-    except sqlite3.IntegrityError as e:
-        raise ValueError('Application already exists or integrity error') from e
-    finally:
-        conn.close()
+        return _exec_table_insert("applications", payload)
+    except Exception as e:
+        raise e
 
 
-def get_applications_for_student(student_roll, db_path=DEFAULT_DB):
-    pass
+def get_applications_for_student(student_roll: str):
+    student = find_student_by_reg_no(student_roll)
+    if not student:
+        return []
+    res = (
+        sb.table("applications")
+        .select(
+            "id, internship_id, status, note, applied_at, internships(title,company)"
+        )
+        .eq("student_id", student["id"])
+        .execute()
+    )
+    return getattr(res, "data", None) or res.get("data", None)
 
-def get_all_applications(db_path=DEFAULT_DB):
-    pass
 
-def change_application_status(application_id, new_status, db_path=DEFAULT_DB):
-    pass
+def get_all_applications():
+    res = (
+        sb.table("applications")
+        .select(
+            "id, student_id, status, note, applied_at, students(name,roll_no), internships(title,company)"
+        )
+        .execute()
+    )
+    return getattr(res, "data", None) or res.get("data", None)
+
+
+def change_application_status(application_id: int, new_status: str):
+    allowed = {"Applied", "Shortlisted", "Rejected", "Hired", "Pending"}
+    if new_status not in allowed:
+        raise ValueError(f"Status must be one of {allowed}")
+    return _exec_table_update(
+        "applications", {"status": new_status}, {"id": application_id}
+    )
