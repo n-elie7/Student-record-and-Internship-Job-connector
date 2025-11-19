@@ -15,6 +15,8 @@ from students import (
     update_student,
 )
 
+from tabulate import tabulate
+
 
 def input_nonempty(prompt):
     while True:
@@ -53,21 +55,29 @@ def admin_menu():
                 print("\nStudent added.")
             elif choice == "2":
                 students = get_all_students()
+
+                data = []
                 if not students:
                     print("\nNo students.")
                 for student in students:
-                    print(student)
+                    data.append(student)
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "3":
                 answer = input_nonempty("\nEnter reg_no or name substring: ")
                 by_reg_no = find_student_by_reg_no(answer)
+
+                data = []
                 if by_reg_no:
-                    print(by_reg_no)
+                    data.append(by_reg_no)
+                    print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
                 else:
                     students = search_students_by_name(answer)
+                    data = []
                     if not students:
                         print("\nNo student matches.")
                     for student in students:
-                        print(student)
+                        data.append(student)
+                    print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "4":
                 reg_no = input_nonempty("\nReg no to update: ")
                 name = input("New name (blank to skip): ").strip() or None
@@ -114,20 +124,31 @@ def admin_menu():
                 print("\nInternship added successfully.")
             elif choice == "7":
                 internships = get_all_internships()
+
+                data = []
+
                 if not internships:
                     print("\nNo internships found.")
                 for internship in internships:
-                    print(internship)
+                    data.append(internship)
+
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "8":
                 applications = get_all_applications()
+
+                data = []
+
                 if not applications:
                     print("\nNo applications found.")
                 for application in applications:
-                    print(application)
+                    data.append(application)
+
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "9":
                 application_id = int(input_nonempty("\nApplication ID: "))
 
                 applications = get_all_applications()
+                
                 app_ids = [app["id"] for app in applications]
                 if application_id not in app_ids:
                     print("\nApplication ID not found.")
