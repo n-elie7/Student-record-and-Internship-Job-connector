@@ -4,6 +4,10 @@ Seed Supabase DB with dummy data for SRIC.
 Uses SUPABASE_SERVICE_ROLE_KEY (set as env var).
 """
 
+# Run this file only once for the demo data
+# Or initial data to the database.
+
+
 from datetime import date, timedelta
 from setup_env import supabase as sb
 
