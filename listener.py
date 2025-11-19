@@ -11,7 +11,7 @@ def _payload_printer(payload):
         table = payload.get("table")
         ev = payload.get("type") or payload.get("eventType") or payload.get("event")
         record = payload.get("record") or payload.get("new") or payload.get("row")
-        print(f"\n🔔 [Realtime] {table} - {ev}")
+        
         if record:
             print(f"   → {record}")
         if table in _realtime_flags:
@@ -41,7 +41,6 @@ async def async_realtime_listener():
             )
     
     await channel.subscribe()
-    print("👂 [Realtime] Listening for changes...")
     
     # Keep connection alive
     while True:
@@ -59,4 +58,3 @@ def start_realtime_listener():
     
     t = threading.Thread(target=run_async, daemon=True)
     t.start()
-    print("[Realtime] Listener started in background.")
