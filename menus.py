@@ -52,22 +52,22 @@ def admin_menu():
 
                 print("\nStudent added.")
             elif choice == "2":
-                s = get_all_students()
-                if not s:
+                students = get_all_students()
+                if not students:
                     print("\nNo students.")
-                for r in s:
-                    print(r)
+                for student in students:
+                    print(student)
             elif choice == "3":
-                q = input_nonempty("\nEnter reg_no or name substring: ")
-                by_reg_no = find_student_by_reg_no(q)
+                answer = input_nonempty("\nEnter reg_no or name substring: ")
+                by_reg_no = find_student_by_reg_no(answer)
                 if by_reg_no:
                     print(by_reg_no)
                 else:
-                    lst = search_students_by_name(q)
-                    if not lst:
+                    students = search_students_by_name(answer)
+                    if not students:
                         print("\nNo student matches.")
-                    for r in lst:
-                        print(r)
+                    for student in students:
+                        print(student)
             elif choice == "4":
                 reg_no = input_nonempty("\nReg no to update: ")
                 name = input("New name (blank to skip): ").strip() or None
@@ -105,39 +105,39 @@ def admin_menu():
 
                 print("\nInternship added successfully.")
             elif choice == "7":
-                it = get_all_internships()
-                if not it:
+                internships = get_all_internships()
+                if not internships:
                     print("\nNo internships found.")
-                for r in it:
-                    print(r)
+                for internship in internships:
+                    print(internship)
             elif choice == "8":
-                apps = get_all_applications()
-                if not apps:
+                applications = get_all_applications()
+                if not applications:
                     print("\nNo applications found.")
-                for a in apps:
-                    print(a)
+                for application in applications:
+                    print(application)
             elif choice == "9":
-                aid = int(input_nonempty("\nApplication ID: "))
-                st = input_nonempty(
+                application_id = int(input_nonempty("\nApplication ID: "))
+                status = input_nonempty(
                     "New status (Applied/Shortlisted/Rejected/Hired/Pending): "
                 )
-                change_application_status(aid, st)
+                change_application_status(application_id, status)
                 print("\nStatus changed (if application exists).")
             elif choice == "10":
                 import csv
 
-                tbl = input_nonempty("\nTable (students/internships/applications): ")
-                fname = input_nonempty("Filename to save (e.g. filename.csv): ")
-                data = _exec_table_select(tbl, "*")
+                table = input_nonempty("\nTable (students/internships/applications): ")
+                filename = input_nonempty("Filename to save (e.g. filename.csv): ")
+                data = _exec_table_select(table, "*")
                 if not data:
                     print("\nNo data to export.")
                 else:
                     keys = list(data[0].keys())
-                    with open(fname, "w", newline="", encoding="utf-8") as f:
+                    with open(filename, "w", newline="", encoding="utf-8") as f:
                         writer = csv.DictWriter(f, fieldnames=keys)
                         writer.writeheader()
                         writer.writerows(data)
-                    print("Exported to", fname)
+                    print("Exported to", filename)
             elif choice == "11":
                 break
             else:
@@ -158,20 +158,20 @@ def student_menu():
         try:
             if choice == "1":
                 reg_no = input_nonempty("\nEnter your reg_no: ")
-                s = find_student_by_reg_no(reg_no)
-                print(s if s else "\n Reg_no not found")
+                student = find_student_by_reg_no(reg_no)
+                print(student if student else "\nReg_no not found")
             elif choice == "2":
-                lst = get_open_internships()
-                if not lst:
+                open_internships = get_open_internships()
+                if not open_internships:
                     print("\nNo open internships.")
-                for r in lst:
-                    print(r)
+                for internship in open_internships:
+                    print(internship)
             elif choice == "3":
                 reg_no = input_nonempty("\nYour reg_no: ")
-                iid = int(input_nonempty("Internship ID: "))
+                internship_id = int(input_nonempty("Internship ID: "))
                 note = input("Note (optional): ").strip() or None
 
-                apply_to_internship(reg_no, iid, note)
+                apply_to_internship(reg_no, internship_id, note)
 
                 print("\nApplied (or error thrown).")
             elif choice == "4":
