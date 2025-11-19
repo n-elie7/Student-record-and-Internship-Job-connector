@@ -29,7 +29,7 @@ def get_all_students():
 
 
 def find_student_by_reg_no(reg_no: str):
-    """Find a student by their roll number."""
+    """Find a student by their reg_no number."""
     res = _exec_table_select("students", "*", {"reg_no": reg_no.strip()})
     return res[0] if res else None
 
@@ -50,5 +50,5 @@ def update_student(reg_no: str, **fields):
 
 
 def delete_student(reg_no: str):
-    """Delete a student from the database by their roll number."""
+    """Delete a student from the database by their reg_no number."""
     return _exec_table_delete("students", {"reg_no": reg_no.strip()})
