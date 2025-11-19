@@ -82,12 +82,20 @@ def admin_menu():
                 print("\nUpdate attempted.")
             elif choice == "5":
                 reg_no = input_nonempty("\nReg no to delete: ")
+
+                is_exist = find_student_by_reg_no(reg_no)
+
+                if not is_exist:
+                    print("\nReg_no not found.")
+                    continue
+
                 confirm = input(f"\nType YES to confirm deletion of {reg_no}: ").strip()
-                if confirm == "YES":
+
+                if confirm.lower() == "yes":
                     delete_student(reg_no)
-                    print("\nDeleted (if existed).")
+                    print(f"\nDeleted {reg_no} successfully.")
                 else:
-                    print("\nCancelled.")
+                    print("\nCancelled deletion.")
             elif choice == "6":
                 title = input_nonempty("\nTitle: ")
                 company = input("Company: ").strip() or None
@@ -118,11 +126,25 @@ def admin_menu():
                     print(application)
             elif choice == "9":
                 application_id = int(input_nonempty("\nApplication ID: "))
+
+                applications = get_all_applications()
+                app_ids = [app["id"] for app in applications]
+                if application_id not in app_ids:
+                    print("\nApplication ID not found.")
+                    continue
+
+                status_options = ("Applied", "Shortlisted", "Rejected", "Hired", "Pending")
+
                 status = input_nonempty(
                     "New status (Applied/Shortlisted/Rejected/Hired/Pending): "
                 )
+                
+                if status not in status_options:
+                    print("\nInvalid status option.")
+                    continue
+                
                 change_application_status(application_id, status)
-                print("\nStatus changed (if application exists).")
+                print(f"\nStatus changed to {status}.")
             elif choice == "10":
                 import csv
 
