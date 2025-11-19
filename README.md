@@ -179,9 +179,9 @@ When your teammate adds/updates/deletes a record, you'll see:
 
 ### Admin Functions
 
-1. **Add Student**: Register new students with roll number, name, age, course, and GPA
+1. **Add Student**: Register new students with reg_no number, name, age, course, and GPA
 2. **View All Students**: Display complete list of registered students
-3. **Search Student**: Find students by roll number or name
+3. **Search Student**: Find students by reg_no number or name
 4. **Update Student**: Modify existing student information
 5. **Delete Student**: Remove student records
 6. **Add Internship**: Create new internship opportunities
@@ -192,7 +192,7 @@ When your teammate adds/updates/deletes a record, you'll see:
 
 ### Student Functions
 
-1. **View Profile**: Look up your student profile by roll number
+1. **View Profile**: Look up your student profile by reg_no number
 2. **List Open Internships**: View internships that haven't passed their deadline
 3. **Apply to Internship**: Submit an application with optional note
 4. **View My Applications**: Track your application status

@@ -4,8 +4,8 @@ from students import find_student_by_reg_no
 from setup_env import supabase as sb
 
 
-def apply_to_internship(student_roll: str, internship_id: int, note: str | None):
-    student = find_student_by_reg_no(student_roll)
+def apply_to_internship(student_reg_no: str, internship_id: int, note: str | None):
+    student = find_student_by_reg_no(student_reg_no)
     if not student:
         raise ValueError("Student not found.")
     # Prevent applying after deadline: check internship
@@ -32,8 +32,8 @@ def apply_to_internship(student_roll: str, internship_id: int, note: str | None)
         raise e
 
 
-def get_applications_for_student(student_roll: str):
-    student = find_student_by_reg_no(student_roll)
+def get_applications_for_student(student_reg_no: str):
+    student = find_student_by_reg_no(student_reg_no)
     if not student:
         return []
     res = (
@@ -51,7 +51,7 @@ def get_all_applications():
     res = (
         sb.table("applications")
         .select(
-            "id, student_id, status, note, applied_at, students(name,roll_no), internships(title,company)"
+            "id, student_id, status, note, applied_at, students(name,reg_no), internships(title,company)"
         )
         .execute()
     )

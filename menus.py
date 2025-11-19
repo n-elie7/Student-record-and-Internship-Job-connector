@@ -41,13 +41,13 @@ def admin_menu():
         try:
             if choice == "1":
                 name = input_nonempty("Name: ")
-                roll = input_nonempty("Roll no: ")
+                reg_no = input_nonempty("Reg no: ")
                 age = input("Age (optional): ").strip() or None
                 age = int(age) if age else None
                 course = input("Course (optional): ").strip() or None
                 gpa = input("GPA (optional): ").strip() or None
                 gpa = float(gpa) if gpa else None
-                add_student(name, roll, age, course, gpa)
+                add_student(name, reg_no, age, course, gpa)
                 print("Student added.")
             elif choice == "2":
                 s = get_all_students()
@@ -56,10 +56,10 @@ def admin_menu():
                 for r in s:
                     print(r)
             elif choice == "3":
-                q = input_nonempty("Enter roll or name substring: ")
-                by_roll = find_student_by_reg_no(q)
-                if by_roll:
-                    print(by_roll)
+                q = input_nonempty("Enter reg_no or name substring: ")
+                by_reg_no = find_student_by_reg_no(q)
+                if by_reg_no:
+                    print(by_reg_no)
                 else:
                     lst = search_students_by_name(q)
                     if not lst:
@@ -67,20 +67,20 @@ def admin_menu():
                     for r in lst:
                         print(r)
             elif choice == "4":
-                roll = input_nonempty("Roll no to update: ")
+                reg_no = input_nonempty("Reg no to update: ")
                 name = input("New name (blank to skip): ").strip() or None
                 age = input("New age (blank to skip): ").strip() or None
                 age = int(age) if age else None
                 course = input("New course (blank to skip): ").strip() or None
                 gpa = input("New gpa (blank to skip): ").strip() or None
                 gpa = float(gpa) if gpa else None
-                update_student(roll, name=name, age=age, course=course, gpa=gpa)
+                update_student(reg_no, name=name, age=age, course=course, gpa=gpa)
                 print("Update attempted.")
             elif choice == "5":
-                roll = input_nonempty("Roll no to delete: ")
-                confirm = input(f"Type YES to confirm deletion of {roll}: ").strip()
+                reg_no = input_nonempty("Reg no to delete: ")
+                confirm = input(f"Type YES to confirm deletion of {reg_no}: ").strip()
                 if confirm == "YES":
-                    delete_student(roll)
+                    delete_student(reg_no)
                     print("Deleted (if existed).")
                 else:
                     print("Cancelled.")
@@ -151,8 +151,8 @@ def student_menu():
         choice = input("Enter choice: ").strip()
         try:
             if choice == "1":
-                roll = input_nonempty("Enter your roll no: ")
-                s = find_student_by_reg_no(roll)
+                reg_no = input_nonempty("Enter your reg_no: ")
+                s = find_student_by_reg_no(reg_no)
                 print(s if s else "Not found")
             elif choice == "2":
                 lst = get_open_internships()
@@ -161,14 +161,14 @@ def student_menu():
                 for r in lst:
                     print(r)
             elif choice == "3":
-                roll = input_nonempty("Your roll no: ")
+                reg_no = input_nonempty("Your reg_no: ")
                 iid = int(input_nonempty("Internship ID: "))
                 note = input("Note (optional): ").strip() or None
-                apply_to_internship(roll, iid, note)
+                apply_to_internship(reg_no, iid, note)
                 print("Applied (or error thrown).")
             elif choice == "4":
-                roll = input_nonempty("Your roll no: ")
-                apps = get_applications_for_student(roll)
+                reg_no = input_nonempty("Your reg_no: ")
+                apps = get_applications_for_student(reg_no)
                 if not apps:
                     print("No applications.")
                 for a in apps:
