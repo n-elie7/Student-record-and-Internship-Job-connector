@@ -138,7 +138,7 @@ def admin_menu():
                 status = input_nonempty(
                     "New status (Applied/Shortlisted/Rejected/Hired/Pending): "
                 )
-                
+
                 if status not in status_options:
                     print("\nInvalid status option.")
                     continue
@@ -148,7 +148,13 @@ def admin_menu():
             elif choice == "10":
                 import csv
 
+                table_options = ("students", "internships", "applications")
                 table = input_nonempty("\nTable (students/internships/applications): ")
+
+                if table not in table_options:
+                    print("\nInvalid table name.")
+                    continue
+
                 filename = input_nonempty("Filename to save (e.g. filename.csv): ")
                 data = _exec_table_select(table, "*")
                 if not data:
@@ -198,11 +204,11 @@ def student_menu():
                 print("\nApplied (or error thrown).")
             elif choice == "4":
                 reg_no = input_nonempty("\nYour reg_no: ")
-                apps = get_applications_for_student(reg_no)
-                if not apps:
+                applications = get_applications_for_student(reg_no)
+                if not applications:
                     print("\nNo applications yet.")
-                for a in apps:
-                    print(a)
+                for application in applications:
+                    print(application)
             elif choice == "5":
                 break
             else:
