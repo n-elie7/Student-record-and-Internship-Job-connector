@@ -144,7 +144,7 @@ python3 main.py
 You should see:
 ```
 ========================================
-=== Student Record & Internship Connector
+=== Student Record & Internship Connector ===
 ========================================
 1) Admin
 2) Student

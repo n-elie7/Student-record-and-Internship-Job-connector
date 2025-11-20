@@ -214,13 +214,23 @@ def student_menu():
             if choice == "1":
                 reg_no = input_nonempty("\nEnter your reg_no: ")
                 student = find_student_by_reg_no(reg_no)
-                print(student if student else "\nReg_no not found")
+
+                data = []
+                if student:
+                    data.append(student)
+                else:
+                    print("\nReg_no not found")
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "2":
                 open_internships = get_open_internships()
+
+                data = []
+
                 if not open_internships:
                     print("\nNo open internships.")
                 for internship in open_internships:
-                    print(internship)
+                    data.append(internship)
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "3":
                 reg_no = input_nonempty("\nYour reg_no: ")
                 internship_id = int(input_nonempty("Internship ID: "))
@@ -228,14 +238,18 @@ def student_menu():
 
                 apply_to_internship(reg_no, internship_id, note)
 
-                print("\nApplied (or error thrown).")
+                print(f"\nApplied to internship {internship_id}.")
             elif choice == "4":
                 reg_no = input_nonempty("\nYour reg_no: ")
                 applications = get_applications_for_student(reg_no)
+
+                data = []
+
                 if not applications:
                     print("\nNo applications yet.")
                 for application in applications:
-                    print(application)
+                    data.append(application)
+                print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "5":
                 break
             else:
