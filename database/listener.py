@@ -10,7 +10,6 @@ def _payload_printer(payload):
     global _change_detected
     try:
         table = payload.get("table")
-        ev = payload.get("type") or payload.get("eventType") or payload.get("event")
         record = payload.get("record") or payload.get("new") or payload.get("row")
 
         if record:
