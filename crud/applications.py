@@ -1,6 +1,6 @@
 from database.helper_wrappers import _exec_table_insert, _exec_table_update
-from internships import find_internship_by_id
-from students import find_student_by_reg_no
+from crud.internships import find_internship_by_id
+from crud.students import find_student_by_reg_no
 from setup_env import supabase as sb
 
 

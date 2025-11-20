@@ -143,15 +143,13 @@ python3 main.py
 
 You should see:
 ```
-🚀 Connecting to Supabase... ✓ Connected!
-👂 [Realtime] Listening for changes...
-
 ========================================
-SRIC - Student Record Internship System
+=== Student Record & Internship Connector
 ========================================
 1) Admin
 2) Student
 3) Exit
+
 Enter choice:
 ```
 
@@ -171,7 +169,6 @@ To test real-time collaboration:
 
 When your teammate adds/updates/deletes a record, you'll see:
 ```
-🔔 [Realtime] students - INSERT
    → {'id': 1, 'name': 'John Doe', 'reg_no': 'S001', ...}
 ```
 
@@ -288,4 +285,4 @@ pip install -r requirements.txt
 
 ---
 
-**Happy Coding! 🎉**
+**Happy Coding!**
