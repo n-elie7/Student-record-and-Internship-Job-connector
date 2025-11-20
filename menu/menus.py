@@ -1,12 +1,12 @@
-from applications import (
+from crud.applications import (
     apply_to_internship,
     change_application_status,
     get_all_applications,
     get_applications_for_student,
 )
-from helper_wrappers import _exec_table_select
-from internships import add_internship, get_all_internships, get_open_internships
-from students import (
+from database.helper_wrappers import _exec_table_select
+from crud.internships import add_internship, get_all_internships, get_open_internships
+from crud.students import (
     add_student,
     delete_student,
     find_student_by_reg_no,
@@ -148,13 +148,19 @@ def admin_menu():
                 application_id = int(input_nonempty("\nApplication ID: "))
 
                 applications = get_all_applications()
-                
+
                 app_ids = [app["id"] for app in applications]
                 if application_id not in app_ids:
                     print("\nApplication ID not found.")
                     continue
 
-                status_options = ("Applied", "Shortlisted", "Rejected", "Hired", "Pending")
+                status_options = (
+                    "Applied",
+                    "Shortlisted",
+                    "Rejected",
+                    "Hired",
+                    "Pending",
+                )
 
                 status = input_nonempty(
                     "New status (Applied/Shortlisted/Rejected/Hired/Pending): "
@@ -163,7 +169,7 @@ def admin_menu():
                 if status not in status_options:
                     print("\nInvalid status option.")
                     continue
-                
+
                 change_application_status(application_id, status)
                 print(f"\nStatus changed to {status}.")
             elif choice == "10":

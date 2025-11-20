@@ -1,5 +1,5 @@
-from listener import start_realtime_listener
-from menus import admin_menu, student_menu
+from database.listener import start_realtime_listener
+from menu.menus import admin_menu, student_menu
 from setup_env import supabase as sb
 
 
