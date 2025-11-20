@@ -35,12 +35,14 @@ def find_student_by_reg_no(reg_no: str):
 
 
 def search_students_by_name(name_substr: str):
+    """function to search student by his/her name"""
     # use ilike filters via .ilike()
     res = sb.table("students").select("*").ilike("name", f"%{name_substr}%").execute()
     return getattr(res, "data", None) or res.get("data", None)
 
 
 def update_student(reg_no: str, **fields):
+    """Update student from database to new data"""
     allowed = {"name", "age", "course", "gpa"}
     payload = {k: v for k, v in fields.items() if k in allowed and v is not None}
     if not payload:

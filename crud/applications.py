@@ -34,6 +34,7 @@ def apply_to_internship(student_reg_no: str, internship_id: int, note: str | Non
 
 
 def get_applications_for_student(student_reg_no: str):
+    """function to get applications for specific students."""
     student = find_student_by_reg_no(student_reg_no)
     if not student:
         return []
@@ -49,6 +50,7 @@ def get_applications_for_student(student_reg_no: str):
 
 
 def get_all_applications():
+    """function to retrieve all applications"""
     res = (
         sb.table("applications")
         .select(
@@ -60,6 +62,7 @@ def get_all_applications():
 
 
 def change_application_status(application_id: int, new_status: str):
+    """Function to change application status"""
     allowed = {"Applied", "Shortlisted", "Rejected", "Hired", "Pending"}
     if new_status not in allowed:
         raise ValueError(f"Status must be one of {allowed}")
