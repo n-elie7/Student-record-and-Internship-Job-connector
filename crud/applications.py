@@ -1,22 +1,24 @@
-from database.helper_wrappers import Database
-from crud.internships import Internship
-from crud.students import Student
-from setup_env import supabase as sb
-
+from datetime import datetime, date
 
 class Application:
+    """Application model for managing internship applications"""
+    def __init__(self, db, student_model, internship_model):
+        self.db = db
+        self.student = student_model
+        self.internship = internship_model
+        self.table_name = "applications"
+
     def apply_to_internship(self, student_reg_no: str, internship_id: int, note: str | None):
         """Function to apply for internships"""
-        student = Student.find_student_by_reg_no(student_reg_no)
+        student = self.student.find_student_by_reg_no(student_reg_no)
         if not student:
             raise ValueError("Student not found.")
         # Prevent applying after deadline: check internship
-        intern = Internship.find_internship_by_id(internship_id)
+        intern = self.internship.find_internship_by_id(internship_id)
         if not intern:
             raise ValueError("Internship not found.")
         if intern.get("application_deadline"):
             # simple check
-            from datetime import datetime, date
 
             try:
                 d = datetime.strptime(intern["application_deadline"], "%Y-%m-%d").date()
@@ -29,17 +31,17 @@ class Application:
         if note:
             payload["note"] = note
         try:
-            return Database._exec_table_insert("applications", payload)
+            return self.db._exec_table_insert(self.table_name, payload)
         except Exception as e:
             raise e
 
     def get_applications_for_student(self, student_reg_no: str):
         """function to get applications for specific students."""
-        student = Student.find_student_by_reg_no(student_reg_no)
+        student = self.student.find_student_by_reg_no(student_reg_no)
         if not student:
             return []
         res = (
-            sb.table("applications")
+            self.db.client.table(self.table_name)
             .select(
                 "id, internship_id, status, note, applied_at, internships(title,company)"
             )
@@ -51,7 +53,7 @@ class Application:
     def get_all_applications(self):
         """function to retrieve all applications"""
         res = (
-            sb.table("applications")
+            self.db.client.table(self.table_name)
             .select(
                 "id, student_id, status, note, applied_at, students(name,reg_no), internships(title,company)"
             )
@@ -64,6 +66,6 @@ class Application:
         allowed = {"Applied", "Shortlisted", "Rejected", "Hired", "Pending"}
         if new_status not in allowed:
             raise ValueError(f"Status must be one of {allowed}")
-        return Database._exec_table_update(
-            "applications", {"status": new_status}, {"id": application_id}
+        return self.db._exec_table_update(
+            self.table_name, {"status": new_status}, {"id": application_id}
         )

@@ -1,10 +1,13 @@
 from datetime import datetime
 import time
-from database.helper_wrappers import Database
-from setup_env import supabase as sb
 
 
 class Internship:
+    """Internship model for managing internship opportunities"""
+    def __init__(self, db):
+        self.db = db
+        self.table_name = "internships"
+
     def add_internship(
         self,
         title: str,
@@ -31,18 +34,18 @@ class Internship:
             datetime.strftime(application_deadline, "%Y-%m-%d")
             payload["application_deadline"] = application_deadline
 
-        return Database._exec_table_insert("internships", payload)
+        return self.db._exec_table_insert(self.table_name, payload)
 
     def get_all_internships(self):
         """Retrieves all internships from the database."""
-        return Database._exec_table_select("internships", "*")
+        return self.db._exec_table_select(self.table_name, "*")
 
     def get_open_internships(self):
         """Retrieves all internships with application deadlines in the future or null."""
         today = time.strftime("%Y-%m-%d")
         # include null deadlines as open too
         res = (
-            sb.table("internships")
+            self.db.client.table(self.table_name)
             .select("*")
             .or_(f"application_deadline.is.null,application_deadline.gte.{today}")
             .execute()
@@ -51,7 +54,7 @@ class Internship:
 
     def find_internship_by_id(self, intern_id: int):
         """Finds an internship by its ID."""
-        res = Database._exec_table_select("internships", "*", {"id": intern_id})
+        res = self.db._exec_table_select(self.table_name, "*", {"id": intern_id})
         return res[0] if res else None
 
     def update_internship(self, internship_id: int, **fields):
@@ -68,8 +71,8 @@ class Internship:
         payload = {k: v for k, v in fields.items() if k in allowed and v is not None}
         if not payload:
             raise ValueError("No valid fields to update")
-        return Database._exec_table_update("internships", payload, {"id": internship_id})
+        return self.db._exec_table_update(self.table_name, payload, {"id": internship_id})
 
     def delete_internship(self, internship_id: int):
         """Deletes an internship by its ID."""
-        return Database._exec_table_delete("internships", {"id": internship_id})
+        return self.db._exec_table_delete(self.table_name, {"id": internship_id})
