@@ -1,19 +1,7 @@
-from crud.applications import (
-    apply_to_internship,
-    change_application_status,
-    get_all_applications,
-    get_applications_for_student,
-)
-from database.helper_wrappers import _exec_table_select
-from crud.internships import add_internship, get_all_internships, get_open_internships
-from crud.students import (
-    add_student,
-    delete_student,
-    find_student_by_reg_no,
-    get_all_students,
-    search_students_by_name,
-    update_student,
-)
+from crud.applications import Application
+from database.helper_wrappers import Database
+from crud.internships import Internship
+from crud.students import Student
 
 from tabulate import tabulate
 
@@ -50,11 +38,11 @@ def admin_menu():
                 gpa = input("GPA (optional): ").strip() or None
                 gpa = float(gpa) if gpa else None
 
-                add_student(name, reg_no, age, course, gpa)
+                Student.add_student(name, reg_no, age, course, gpa)
 
                 print("\nStudent added.")
             elif choice == "2":
-                students = get_all_students()
+                students = Student.get_all_students()
 
                 data = []
                 if not students:
@@ -64,14 +52,14 @@ def admin_menu():
                 print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "3":
                 answer = input_nonempty("\nEnter reg_no or name substring: ")
-                by_reg_no = find_student_by_reg_no(answer)
+                by_reg_no = Student.find_student_by_reg_no(answer)
 
                 data = []
                 if by_reg_no:
                     data.append(by_reg_no)
                     print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
                 else:
-                    students = search_students_by_name(answer)
+                    students = Student.search_students_by_name(answer)
                     data = []
                     if not students:
                         print("\nNo student matches.")
@@ -87,13 +75,13 @@ def admin_menu():
                 gpa = input("New gpa (blank to skip): ").strip() or None
                 gpa = float(gpa) if gpa else None
 
-                update_student(reg_no, name=name, age=age, course=course, gpa=gpa)
+                Student.update_student(reg_no, name=name, age=age, course=course, gpa=gpa)
 
                 print("\nUpdate attempted.")
             elif choice == "5":
                 reg_no = input_nonempty("\nReg no to delete: ")
 
-                is_exist = find_student_by_reg_no(reg_no)
+                is_exist = Student.find_student_by_reg_no(reg_no)
 
                 if not is_exist:
                     print("\nReg_no not found.")
@@ -102,7 +90,7 @@ def admin_menu():
                 confirm = input(f"\nType YES to confirm deletion of {reg_no}: ").strip()
 
                 if confirm.lower() == "yes":
-                    delete_student(reg_no)
+                    Student.delete_student(reg_no)
                     print(f"\nDeleted {reg_no} successfully.")
                 else:
                     print("\nCancelled deletion.")
@@ -117,13 +105,13 @@ def admin_menu():
                     input("Deadline YYYY-MM-DD (blank if none): ").strip() or None
                 )
 
-                add_internship(
+                Internship.add_internship(
                     title, company, location, duration, stipend, description, deadline
                 )
 
                 print("\nInternship added successfully.")
             elif choice == "7":
-                internships = get_all_internships()
+                internships = Internship.get_all_internships()
 
                 data = []
 
@@ -134,7 +122,7 @@ def admin_menu():
 
                 print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "8":
-                applications = get_all_applications()
+                applications = Application.get_all_applications()
 
                 data = []
 
@@ -147,7 +135,7 @@ def admin_menu():
             elif choice == "9":
                 application_id = int(input_nonempty("\nApplication ID: "))
 
-                applications = get_all_applications()
+                applications = Application.get_all_applications()
 
                 app_ids = [app["id"] for app in applications]
                 if application_id not in app_ids:
@@ -170,7 +158,7 @@ def admin_menu():
                     print("\nInvalid status option.")
                     continue
 
-                change_application_status(application_id, status)
+                Application.change_application_status(application_id, status)
                 print(f"\nStatus changed to {status}.")
             elif choice == "10":
                 import csv
@@ -183,7 +171,7 @@ def admin_menu():
                     continue
 
                 filename = input_nonempty("Filename to save (e.g. filename.csv): ")
-                data = _exec_table_select(table, "*")
+                data = Database._exec_table_select(table, "*")
                 if not data:
                     print("\nNo data to export.")
                 else:
@@ -213,7 +201,7 @@ def student_menu():
         try:
             if choice == "1":
                 reg_no = input_nonempty("\nEnter your reg_no: ")
-                student = find_student_by_reg_no(reg_no)
+                student = Student.find_student_by_reg_no(reg_no)
 
                 data = []
                 if student:
@@ -222,7 +210,7 @@ def student_menu():
                     print("\nReg_no not found")
                 print(tabulate(data, headers="keys", tablefmt="fancy_grid"))
             elif choice == "2":
-                open_internships = get_open_internships()
+                open_internships = Internship.get_open_internships()
 
                 data = []
 
@@ -236,12 +224,12 @@ def student_menu():
                 internship_id = int(input_nonempty("Internship ID: "))
                 note = input("Note (optional): ").strip() or None
 
-                apply_to_internship(reg_no, internship_id, note)
+                Application.apply_to_internship(reg_no, internship_id, note)
 
                 print(f"\nApplied to internship {internship_id}.")
             elif choice == "4":
                 reg_no = input_nonempty("\nYour reg_no: ")
-                applications = get_applications_for_student(reg_no)
+                applications = Application.get_applications_for_student(reg_no)
 
                 data = []
 

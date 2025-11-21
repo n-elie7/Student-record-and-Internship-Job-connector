@@ -1,71 +1,69 @@
-from database.helper_wrappers import _exec_table_insert, _exec_table_update
-from crud.internships import find_internship_by_id
-from crud.students import find_student_by_reg_no
+from database.helper_wrappers import Database
+from crud.internships import Internship
+from crud.students import Student
 from setup_env import supabase as sb
 
 
-def apply_to_internship(student_reg_no: str, internship_id: int, note: str | None):
-    """Function to apply for internships"""
-    student = find_student_by_reg_no(student_reg_no)
-    if not student:
-        raise ValueError("Student not found.")
-    # Prevent applying after deadline: check internship
-    intern = find_internship_by_id(internship_id)
-    if not intern:
-        raise ValueError("Internship not found.")
-    if intern.get("application_deadline"):
-        # simple check
-        from datetime import datetime, date
+class Application:
+    def apply_to_internship(self, student_reg_no: str, internship_id: int, note: str | None):
+        """Function to apply for internships"""
+        student = Student.find_student_by_reg_no(student_reg_no)
+        if not student:
+            raise ValueError("Student not found.")
+        # Prevent applying after deadline: check internship
+        intern = Internship.find_internship_by_id(internship_id)
+        if not intern:
+            raise ValueError("Internship not found.")
+        if intern.get("application_deadline"):
+            # simple check
+            from datetime import datetime, date
 
+            try:
+                d = datetime.strptime(intern["application_deadline"], "%Y-%m-%d").date()
+                if d < date.today():
+                    raise ValueError("Cannot apply: application deadline has passed.")
+            except ValueError:
+                # If date parse fails, ignore
+                pass
+        payload = {"student_id": student["id"], "internship_id": internship_id}
+        if note:
+            payload["note"] = note
         try:
-            d = datetime.strptime(intern["application_deadline"], "%Y-%m-%d").date()
-            if d < date.today():
-                raise ValueError("Cannot apply: application deadline has passed.")
-        except ValueError:
-            # If date parse fails, ignore
-            pass
-    payload = {"student_id": student["id"], "internship_id": internship_id}
-    if note:
-        payload["note"] = note
-    try:
-        return _exec_table_insert("applications", payload)
-    except Exception as e:
-        raise e
+            return Database._exec_table_insert("applications", payload)
+        except Exception as e:
+            raise e
 
-
-def get_applications_for_student(student_reg_no: str):
-    """function to get applications for specific students."""
-    student = find_student_by_reg_no(student_reg_no)
-    if not student:
-        return []
-    res = (
-        sb.table("applications")
-        .select(
-            "id, internship_id, status, note, applied_at, internships(title,company)"
+    def get_applications_for_student(self, student_reg_no: str):
+        """function to get applications for specific students."""
+        student = Student.find_student_by_reg_no(student_reg_no)
+        if not student:
+            return []
+        res = (
+            sb.table("applications")
+            .select(
+                "id, internship_id, status, note, applied_at, internships(title,company)"
+            )
+            .eq("student_id", student["id"])
+            .execute()
         )
-        .eq("student_id", student["id"])
-        .execute()
-    )
-    return getattr(res, "data", None) or res.get("data", None)
+        return getattr(res, "data", None) or res.get("data", None)
 
-
-def get_all_applications():
-    """function to retrieve all applications"""
-    res = (
-        sb.table("applications")
-        .select(
-            "id, student_id, status, note, applied_at, students(name,reg_no), internships(title,company)"
+    def get_all_applications(self):
+        """function to retrieve all applications"""
+        res = (
+            sb.table("applications")
+            .select(
+                "id, student_id, status, note, applied_at, students(name,reg_no), internships(title,company)"
+            )
+            .execute()
         )
-        .execute()
-    )
-    return getattr(res, "data", None) or res.get("data", None)
+        return getattr(res, "data", None) or res.get("data", None)
 
-
-def change_application_status(application_id: int, new_status: str):
-    """Function to change application status"""
-    allowed = {"Applied", "Shortlisted", "Rejected", "Hired", "Pending"}
-    if new_status not in allowed:
-        raise ValueError(f"Status must be one of {allowed}")
-    return _exec_table_update(
-        "applications", {"status": new_status}, {"id": application_id}
-    )
+    def change_application_status(self, application_id: int, new_status: str):
+        """Function to change application status"""
+        allowed = {"Applied", "Shortlisted", "Rejected", "Hired", "Pending"}
+        if new_status not in allowed:
+            raise ValueError(f"Status must be one of {allowed}")
+        return Database._exec_table_update(
+            "applications", {"status": new_status}, {"id": application_id}
+        )
