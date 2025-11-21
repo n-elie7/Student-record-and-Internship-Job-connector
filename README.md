@@ -1,6 +1,6 @@
-# SRIC - Student Record Internship System
+# Student Record Internship System
 
-A collaborative CLI-based application for managing student records, internships, and applications with **real-time updates** across multiple users using Supabase.
+A collaborative CLI-based application for managing student records, internships, and applications with **real-time updates** across multiple users using Supabase and adopting MVC Architecture.
 
 ## Features
 
@@ -194,20 +194,28 @@ When your teammate adds/updates/deletes a record, you'll see:
 
 ## Project Structure
 
+
 ```
-student-record-internship-system/
-├── main.py                 # Entry point
-├── setup_env.py           # Supabase configuration
-├── listener.py            # Real-time listener
-├── helper_wrappers.py     # Database helper functions
-├── students.py            # Student CRUD operations
-├── internships.py         # Internship CRUD operations
-├── applications.py        # Application CRUD operations
-├── menus.py               # CLI menu interfaces
-├── .env                   # Environment variables (create this)
-├── requirements.txt       # Python dependencies
-├── seed.py                # initiates database with some data
-└── README.md             # This file
+project/
+├── setup_env.py                 # sets up the connection
+├── database.py                  # database connection
+├── listener.py                  # real-time listener
+├── models/
+│   ├── __init__.py
+│   ├── student.py               # students models
+│   ├── internship.py            # internships models
+│   └── application.py           # applications models
+├── views/
+│   ├── __init__.py
+│   └── menu_view.py             # Menu display
+├── controllers/
+│   ├── __init__.py
+│   ├── admin_controller.py      # Admin controller class
+│   └── student_controller.py    # Student controller class
+├── seed.py                      # initiates database with some data
+├── requirements.txt             # Python dependencies
+├── .env                         # Environment variables (create this)
+└── main.py
 ```
 
 ## Troubleshooting

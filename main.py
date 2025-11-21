@@ -1,6 +1,6 @@
-from database.helper_wrappers import Database
-from database.listener import RealtimeListener
-from menu.menus import MenuView
+from database import Database
+from listener import RealtimeListener
+from views.menus import MenuView
 from controllers.admin_controller import AdminController
 from controllers.student_controller import StudentController
 
@@ -12,9 +12,9 @@ class MainApplication:
         self.db = Database()
         
         # Initialize models
-        from crud.students import Student
-        from crud.internships import Internship
-        from crud.applications import Application
+        from models.students import Student
+        from models.internships import Internship
+        from models.applications import Application
         
         self.student_model = Student(self.db)
         self.internship_model = Internship(self.db)

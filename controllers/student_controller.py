@@ -47,11 +47,23 @@ class StudentController:
     def _apply_to_internship(self):
         reg_no = self.view.input_nonempty("\nYour reg_no: ")
         internship_id = int(self.view.input_nonempty("Internship ID: "))
-        note = input("Note (optional): ").strip() or None
 
-        self.application.apply_to_internship(reg_no, internship_id, note)
+        students = self.student.get_all_students()
+        students_ids = [student["id"] for student in students]
+        
+        internships = self.internship.get_open_internships()
+        internship_ids = [internship["id"] for internship in internships]
 
-        print(f"\nApplied to internship {internship_id}.")
+        if internship_id not in internship_ids:
+            print("\nInternship ID not found.")
+        elif reg_no not in students_ids:
+            print("\nReg no not found")
+        else:
+            note = input("Note (optional): ").strip() or None
+
+            self.application.apply_to_internship(reg_no, internship_id, note)
+
+            print(f"\nApplied to internship {internship_id}.")
     
     def _view_my_applications(self):
         reg_no = self.view.input_nonempty("\nYour reg_no: ")

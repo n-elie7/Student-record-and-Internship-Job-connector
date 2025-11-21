@@ -162,9 +162,9 @@ class AdminController:
 
         if status not in status_options:
             print("\nInvalid status option.")
-
-        self.application.change_application_status(application_id, status)
-        print(f"\nStatus changed to {status}.")
+        else:
+            self.application.change_application_status(application_id, status)
+            print(f"\nStatus changed to {status}.")
     
     def _export_table(self):
         from database import Database
@@ -175,17 +175,17 @@ class AdminController:
 
         if table not in table_options:
             print("\nInvalid table name.")
-
-        filename = self.view.input_nonempty("Filename (e.g. out.csv): ")
-        data = db._exec_table_select(table, "*")
-
-        if not data:
-            print("\nNo data to export.")
         else:
-            keys = list(data[0].keys())
-            with open(filename, "w", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=keys)
-                writer.writeheader()
-                writer.writerows(data)
-            print(f"Exported to {filename}")
+            filename = self.view.input_nonempty("Filename (e.g. out.csv): ")
+            data = db._exec_table_select(table, "*")
+
+            if not data:
+                print("\nNo data to export.")
+            else:
+                keys = list(data[0].keys())
+                with open(filename, "w", newline="", encoding="utf-8") as f:
+                    writer = csv.DictWriter(f, fieldnames=keys)
+                    writer.writeheader()
+                    writer.writerows(data)
+                print(f"Exported to {filename}")
 
